@@ -1,19 +1,11 @@
 <?php
 
-/*
-
-    ACCIONES
-
-*/ 
-
-
-
-
-require '../../../khonos-ORTRAT/main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
+/*SI EL USUARIO NO TIENE PERMISOS*/
 if (!$user->rights->projet->lire) {
     accessforbidden();
 }
@@ -21,7 +13,6 @@ if (!$user->rights->projet->lire) {
 
 $user_id = $user->id;
 if (isset($_POST['button_removefilter'])) {
-    // Limpiar los filtros
     $search_project_ref = '';
     $search_task_label = '';
 } else {
@@ -29,7 +20,7 @@ if (isset($_POST['button_removefilter'])) {
     $search_task_label = isset($_POST['search_task_label']) ? trim($_POST['search_task_label']) : '';
 }
 
-//obtener proyectos/tareas donde el usuario esté asignado
+//OBTENER PROYECTOS Y TAREAS A LOS QUE EL USUARIO ESTE ASIGNADO
 $sql = "SELECT DISTINCT 
             p.rowid AS projectid, 
             p.ref AS projectref, 
@@ -70,7 +61,7 @@ $sql = "SELECT DISTINCT
             AND ect.fk_socpeople = " . $user_id . "  
 ";
 
-// Filtrar por el nombre del proyecto o el título
+//FILTRADO
 if (!empty($search_project_ref)) {
     $sql .= " AND (p.ref LIKE '%" . $db->escape($search_project_ref) . "%' OR p.title LIKE '%" . $db->escape($search_project_ref) . "%')";
 }
@@ -85,10 +76,10 @@ if (!$resql) {
     dol_print_error($db);
 }
 
-//Agrupacion de tareas por proyectos
+//Agrupamos las tareas por proyectos
 $projects = [];
 while ($obj = $db->fetch_object($resql)) {
-    // Si el proyecto no existe en el array
+    // Si el proyecto no esta todavia en el array se inserta
     if (!isset($projects[$obj->projectid])) {
         $projects[$obj->projectid] = [
             'ref' => $obj->projectref,
@@ -114,8 +105,8 @@ while ($obj = $db->fetch_object($resql)) {
  *  */
 
 
-
-$title = $langs->trans("UserProjectsAndTasks");
+/*Todo lo relaccionado con estilos en dolibarr*/ 
+$title = $langs->trans("Chrono tiempos tareas");
 $langs->load("projects");
 
 print '<link rel="stylesheet" type="text/css" href="index.css">'; 
@@ -124,7 +115,7 @@ llxHeader("", $title);
 print load_fiche_titre($langs->trans("Chrono"), '', 'object_informacion_formacion.png@recursoshumanos');
 print '<script src="script.js"></script>';
 
-//Formulario de busqueda
+//Formulario busqueda
 print '
 <table class="noborder centpercent">
     <tr class="liste_titre">
@@ -169,7 +160,7 @@ print '
 </table>
 <br>';
 
-//Modal de elimancion
+/*MODAL PARA RESEETEAR TODOS LOS CONTADORES*/
 print '<div id="confirmModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
     <div style="background: white; margin: 15% auto; padding: 20px; border-radius: 5px; width: 300px; text-align: center;">
         <h3>Confirmar Acción</h3>
@@ -180,9 +171,7 @@ print '<div id="confirmModal" style="display: none; position: fixed; z-index: 10
 </div>';
 
 
-
-
-//Tabla de  proyectos y sus tareas
+/*TABLA PROYECTOS Y TAREAS CON LOS BOTONES DE ACCION*/ 
 foreach ($projects as $project) {
     print "<div class='project-container'>";
     print "<div class='project-title'>" . $project['title'] . " - <a href='" . DOL_URL_ROOT . "/projet/card.php?id=" . $project['projectid'] . "'>" . $project['ref'] . "</a></div>";
@@ -200,7 +189,6 @@ foreach ($projects as $project) {
         print "</div>";
         print "<div class='task-controls'>";
         print "<div class='status-icon' id='reset-" . $task->id . "' style='display: none;' onclick='resetTimer(" . $task->id . ")'>"; 
-        print "<img src='img/reinicio.png' alt='Reiniciar' style='height: 40px;'>"; 
         print "</div>";
         print "</div>";
         print "<input type='hidden' data-task-id='" . $task->id . "' value='" . $project['projectid'] . "'>"; 
@@ -212,12 +200,12 @@ foreach ($projects as $project) {
     print "</div>";
 }
 
+/*BOTONES CON INFORMACION GENERAL*/ 
 print '<div class="search-container">';
 print '<div class="time-buttons">';
 print '<button class=" button-cancel butAction" id="current-time">Hora actual: 00:00:00</button>';
 print '<button class=" button-cancel butAction" id="total-time">Tiempo total: 0h 0m 0s</button>';
 print '</div>';
-print '<button class=" button-cancel butAction" style="margin-left: auto;" onclick="saveTask(\'' . $user->api_key . '\', \'' . $user->id . '\')">Guardar</button>';
 print '</div>';
 print '</form>';
 

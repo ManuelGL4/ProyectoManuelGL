@@ -13,24 +13,30 @@ if (!$user->rights->projet->lire) {
 $title = $langs->trans("Listado tiempo proyectos");
 $langs->load("projects");
 
-// Obtener parámetros de filtrado usando el método GET
+/*FILTROS DEL FORMULARIO*/
 $view_all_projects = isset($_GET['filter']) && $_GET['filter'] === 'all';
 $selected_project = isset($_GET['project']) ? intval($_GET['project']) : 0;
 $selected_user = isset($_GET['user']) ? intval($_GET['user']) : 0;
 $date_start_input = isset($_GET['date_start']) ? $_GET['date_start'] : '';
 $date_end_input = isset($_GET['date_end']) ? $_GET['date_end'] : '';
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Obtener la página actual
-$perPage = 10; // Registros por página
+
+/*PAGINACION*/ 
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; 
+$perPage = 10; 
+
+
+
+
 $user_id = $user->id;
 $project_ids = [];
 
-// Consulta para obtener proyectos en función del filtro
+/*OBTENER LOS PROYECTOS ASIGNADOS A ESE USUARIO*/
 if ($view_all_projects && $user->admin) {
-    // Si es admin y selecciona "Ver todos los proyectos"
+    //ES ADMIN Y SELECCIONA VER TODOS LOS REGISTROS
     $sql_projects = "SELECT DISTINCT p.rowid 
                      FROM " . MAIN_DB_PREFIX . "projet AS p";
 } else {
-    // Ver solo proyectos asignados al usuario
+    //SOLO LOS PROYECTOS QUE TENGA ASIGNADOS
     $sql_projects = "SELECT DISTINCT p.rowid 
                      FROM " . MAIN_DB_PREFIX . "projet AS p
                      LEFT JOIN " . MAIN_DB_PREFIX . "element_contact AS ecp ON ecp.element_id = p.rowid 
@@ -52,25 +58,25 @@ if (empty($project_ids)) {
 
 
 
-// Consulta para obtener los proyectos y tareas sin duplicados
+/*obtener proyectos y tareas*/ 
 $sqlUpd = "SELECT t.rowid, t.*, p.title AS project_title, pt.label AS task_label
            FROM khns_attendance_event AS t
-           INNER JOIN " . MAIN_DB_PREFIX . "projet AS p ON t.fk_project = p.rowid
-           INNER JOIN " . MAIN_DB_PREFIX . "projet_task AS pt ON t.fk_task = pt.rowid
-              WHERE 1 = 1 ";
+            INNER JOIN " . MAIN_DB_PREFIX . "projet AS p ON t.fk_project = p.rowid
+            INNER JOIN " . MAIN_DB_PREFIX . "projet_task AS pt ON t.fk_task = pt.rowid
+            WHERE 1 = 1 ";
 
- 
+
+/*FILTRADO*/
+
 if (isset($_GET['filter_type']) && $_GET['filter_type'] === 'all') {
-    // Si `filter_type=all`, aplica solo `ls_userid` si está presente, distinto de 0 y distinto de -1
     if (isset($_GET['ls_userid']) && intval($_GET['ls_userid']) > 0) {
         $userid = intval($_GET['ls_userid']);
         $sqlUpd .= " AND t.fk_userid = $userid"; 
     }
 } elseif (isset($_GET['filter_type']) && $_GET['filter_type'] === 'assigned') {
-    // Si `filter_type=my_records`, filtra solo por el usuario actual
     $sqlUpd .= " AND t.fk_userid = " . intval($user->id);
 } else {
-    // En caso de no ser admin, aplica el filtro por usuario actual
+    // En caso de no ser admin ver solo sus registros
     if (!$user->admin) {
         $sqlUpd .= " AND t.fk_userid = " . intval($user->id);
     }
@@ -83,32 +89,31 @@ if (isset($_GET['ls_event_type']) && intval($_GET['ls_event_type']) !== 0) {
 }
 
 if (isset($_GET['ls_event_location_ref']) && !empty($_GET['ls_event_location_ref'])) {
-    $eventLocationRef = $db->escape($_GET['ls_event_location_ref']); // Escapa el valor para evitar inyecciones SQL
+    $eventLocationRef = $db->escape($_GET['ls_event_location_ref']);
     $sqlUpd .= " AND p.ref LIKE '%$eventLocationRef%'";
 }
 
 if (isset($_GET['ls_nombre_proyecto']) && !empty($_GET['ls_nombre_proyecto'])) {
-    $nombre = $db->escape($_GET['ls_nombre_proyecto']); // Escapa el valor para evitar inyecciones SQL
+    $nombre = $db->escape($_GET['ls_nombre_proyecto']); 
     $sqlUpd .= " AND p.title LIKE '%$nombre%'";
 }
 if (isset($_GET["ls_ref_tarea"]) && !empty($_GET["ls_ref_tarea"])) {
     $tarea_ref = $db->escape($_GET["ls_ref_tarea"]);
     $sqlUpd.= " AND pt.ref LIKE '%$tarea_ref%'";
 }
-//ls_nombre_tarea
+
 if (isset($_GET["ls_nombre_tarea"]) && !empty($_GET["ls_nombre_tarea"])) {
     $tarea_nom = $db->escape($_GET["ls_nombre_tarea"]);
     $sqlUpd .= " AND pt.label LIKE '%$tarea_nom%'";
 }
 if (isset($_GET["ls_date_time"]) && !empty($_GET["ls_date_time"])) {
-    // Asegurarse de que la fecha esté correctamente formateada
     $date_time = $db->escape($_GET["ls_date_time"]);
-
-    // Modificar la consulta para buscar por la fecha (ignorando la hora)
     $sqlUpd .= " AND DATE(t.date_time_event) = '".$date_time."'";
 }
 $sqlUpd .= " GROUP BY t.rowid";
 
+
+/*PAGINACION EN LA CONSULTA*/
 $perPage = 25;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $perPage;
@@ -120,14 +125,13 @@ $sortorder=isset($_GET['sortorder']) ? $_GET['sortorder'] : $sortorder;
 $sortfield=isset($_GET['sortfield']) ? $_GET['sortfield'] : $sortfield;
 
 $sqlUpd .= " ORDER BY $sortfield $sortorder 
-             LIMIT $offset, $perPage"; // Añadido espacio aquí
+             LIMIT $offset, $perPage";
 
 $resultUpd = $db->query($sqlUpd);
 if ($resultUpd) {
-    // Obtener los registros de la tabla khns_attendance_event
     $projects = [];
     while ($obj = $db->fetch_object($resultUpd)) {
-        $projects[] = $obj;  // Almacenar los registros
+        $projects[] = $obj;
     }
 } else {
     dol_print_error($db);
@@ -136,54 +140,55 @@ if ($resultUpd) {
 $groupedProjects = [];
 $projectTotalTime = [];
 
-// Agrupamos los proyectos y sumamos los tiempos sin duplicación
+//Se agrupan los proyectos con sus tareas
 foreach ($projects as $project) {
     if (!isset($groupedProjects[$project->fk_project])) {
         $groupedProjects[$project->fk_project] = [
             'projectid' => $project->fk_project,
             'tasks' => [],
         ];
-        $projectTotalTime[$project->fk_project] = 0; // Inicializamos el tiempo total del proyecto
+        $projectTotalTime[$project->fk_project] = 0;
     }
     
-    // Solo agregamos la tarea si no está ya en la lista de tareas del proyecto
+    //Agrega la tarea si no esta ya en la lista de tareas del proyecto
     if (!in_array($project, $groupedProjects[$project->fk_project]['tasks'], true)) {
         $groupedProjects[$project->fk_project]['tasks'][] = $project;
     }
 
-    // Sumar el tiempo transcurrido
+    //Suma el tiempo transcurrido
     $projectTotalTime[$project->fk_project] += $project->tiempo_transcurrido; 
 }
 
 
-
+/*SI SE SELECCIONA EDITAR*/
 if ($_GET["action"] == "edit") {
 
     $id = $_GET['id'];
 
-    // SQL para obtener el registro específico que se va a editar
+    //Obtenemos el registro en base al id
     $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "attendance_event WHERE rowid = " . intval($id);
     $resql = $db->query($sql);
     if ($resql && $db->num_rows($resql) > 0) {
         $dat = $db->fetch_object($resql);
 
-        // SQL para obtener el proyecto
+        //obtener el proyecto
         $sqlProyecto = "SELECT title FROM " . MAIN_DB_PREFIX . "projet WHERE rowid = " . intval($dat->fk_project);
         $resqlProyecto = $db->query($sqlProyecto);
         $proyecto = $db->fetch_object($resqlProyecto);
 
-        // SQL para obtener el usuario
+        //obtener el usuario
         $sqlUsuario = "SELECT lastname, firstname FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . intval($dat->fk_userid);
         $resqlUsuario = $db->query($sqlUsuario);
         $usuario = $db->fetch_object($resqlUsuario);
 
-        // SQL para obtener la tarea
+        // obtener la tarea
         $sqlTarea = "SELECT label FROM " . MAIN_DB_PREFIX . "projet_task WHERE rowid = " . intval($dat->fk_task);
         $resqlTarea = $db->query($sqlTarea);
         $tarea = $db->fetch_object($resqlTarea);
 
+        /*SI EL REGISTRO ES UNA SALIDA*/ 
         if ($dat->event_type == 3) {
-            // SQL para obtener la última entrada relacionada con el mismo token
+            // OBTENEMOS SU ENTRADA EN BASE AL TOKEN UNICO
             $sqlUltimaEntrada = "SELECT date_time_event FROM " . MAIN_DB_PREFIX . "attendance_event WHERE token = '" . $db->escape($dat->token) . "' AND event_type IN (1, 2) ORDER BY date_time_event DESC LIMIT 1";
             $resqlUltimaEntrada = $db->query($sqlUltimaEntrada);
             if ($resqlUltimaEntrada && $db->num_rows($resqlUltimaEntrada) > 0) {
@@ -191,23 +196,23 @@ if ($_GET["action"] == "edit") {
                 $lastEntryTime = $db->jdate($entrada->date_time_event);
                 $exitTime = $db->jdate($dat->date_time_event);
 
-                // Calcular el tiempo transcurrido
+                //Calculamos el tiempo transcurrido entre la entrada/salida
                 $elapsedTime = $exitTime - $lastEntryTime;
 
-                // Convertir a horas, minutos y segundos
                 $hours = floor($elapsedTime / 3600);
                 $minutes = floor(($elapsedTime % 3600) / 60);
                 $seconds = $elapsedTime % 60;
 
-                // Formatear el tiempo transcurrido como "H:M:S"
+                //Formatea el tiempo a H,M,S
                 $tiempoFormateado = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
             } else {
-                $tiempoFormateado = '00:00:00'; // Si no hay entrada, mostrar 0
+                $tiempoFormateado = '00:00:00'; //Si no hay entrada el tiempo transcurrido esta a 0
             }
         } else {
-            $tiempoFormateado = '00:00:00'; // Para entradas no mostrar tiempo transcurrido
+            $tiempoFormateado = '00:00:00';//El registro es una entrada,por lo que no hay que mostrar el tiempo
         }
 
+        /*MODAL DE EDICION*/
         print '
         <div style="position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;">
             <form method="POST" action="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '&action=save" name="formfilter" autocomplete="off" style="background: white; padding: 20px; border-radius: 8px; width: 500px; text-align: center;">
@@ -234,6 +239,7 @@ if ($_GET["action"] == "edit") {
                                 <td><input type="text" name="tarea" value="' . htmlspecialchars($tarea->label) . '" readonly style="width: 100%; padding: 5px;"></td>
                             </tr>';
         
+                            /*SOLO PERMITIR CAMBIAR LA HORA DE INICIO SI EL USUARIO ES ADMINISTRADOR*/
                             if($user->admin){
                                 print'
                                 <tr>
@@ -276,22 +282,22 @@ if ($_GET["action"] == "edit") {
 }
 
 if (isset($_POST['edit'])) {
-    // Obtener el ID de la tarea que se va a editar
+    // ID de la tarea
     $id = intval($_GET['id']);
 
-    // Recoger datos del formulario
+    //Datos del fomrulario
     $fecha_inicio = $_POST['fecha_inicio'];
     $nota = $_POST['nota'];
 
-    // Validación básica
     if (empty($fecha_inicio)) {
+        //Metodo dolibarr para mostrar errores
         setEventMessage('Error: La fecha de inicio no puede estar vacía.', 'errors');
     } else {
-        // SQL para obtener el registro específico en attendance_event
         $sqlAttendance = "SELECT * FROM " . MAIN_DB_PREFIX . "attendance_event WHERE rowid = " . $id;
         $resqlAttendance = $db->query($sqlAttendance);
 
         if ($resqlAttendance && $db->num_rows($resqlAttendance) > 0) {
+            
             $datAttendance = $db->fetch_object($resqlAttendance);
             $eventType = $datAttendance->event_type;
             $token = $db->escape($datAttendance->token);
@@ -299,9 +305,10 @@ if (isset($_POST['edit'])) {
             $isTimeValid = true;
             $otherDateTimeTimestamp = null;
 
-            // Buscar el evento relacionado (entrada o salida) con el mismo token y tipo opuesto
+
+            //Buscar evento relacionado con el mismo token
             if ($eventType == 2) { // Es una entrada
-                // Buscar la salida correspondiente
+                //Buscar la salida
                 $sqlOtherEvent = "SELECT * FROM " . MAIN_DB_PREFIX . "attendance_event 
                                   WHERE fk_userid = " . intval($datAttendance->fk_userid) . " 
                                   AND token = '" . $token . "' 
@@ -312,18 +319,17 @@ if (isset($_POST['edit'])) {
                     $datOtherEvent = $db->fetch_object($resqlOtherEvent);
                     $otherDateTimeTimestamp = strtotime($datOtherEvent->date_time_event);
 
-                    // Validar que la nueva hora de entrada no sea posterior a la hora de salida
+                    //Validar que la hora no sea mayor a la salida
                     if ($userStartTime > $otherDateTimeTimestamp) {
                         $isTimeValid = false;
                         setEventMessage('Error: La hora de entrada no puede ser posterior a la hora de salida.', 'errors');
                     }
                 } else {
-                    // No se encontró la salida correspondiente
                     setEventMessage('Error: No se encontró el evento de salida correspondiente.', 'errors');
                     $isTimeValid = false;
                 }
             } elseif ($eventType == 3) { // Es una salida
-                // Buscar la entrada correspondiente
+                // Buscar la entrada
                 $sqlOtherEvent = "SELECT * FROM " . MAIN_DB_PREFIX . "attendance_event 
                                   WHERE fk_userid = " . intval($datAttendance->fk_userid) . " 
                                   AND token = '" . $token . "' 
@@ -334,24 +340,23 @@ if (isset($_POST['edit'])) {
                     $datOtherEvent = $db->fetch_object($resqlOtherEvent);
                     $otherDateTimeTimestamp = strtotime($datOtherEvent->date_time_event);
 
-                    // Validar que la nueva hora de salida no sea anterior a la hora de entrada
+                    //La nueva hora de salida no sea menor a la de la entrada
                     if ($userStartTime < $otherDateTimeTimestamp) {
                         $isTimeValid = false;
                         setEventMessage('Error: La hora de salida no puede ser anterior a la hora de entrada.', 'errors');
                     }
                 } else {
-                    // No se encontró la entrada correspondiente
                     setEventMessage('Error: No se encontró el evento de entrada correspondiente.', 'errors');
                     $isTimeValid = false;
                 }
             }
 
+            //Si todo es valido,hacer la actualizacion
             if ($isTimeValid) {
-                // Si la hora es válida, proceder con la actualización
                 $formattedDate = date('Y-m-d H:i:s', strtotime($datAttendance->date_time_event));
-                $taskDuration = abs($userStartTime - $otherDateTimeTimestamp); // Duración en segundos
+                $taskDuration = abs($userStartTime - $otherDateTimeTimestamp);
 
-                // Actualizar el registro en la tabla projet_task_time
+                //Actualizar los registros en la DB
                 $sqlUpdateTask = "UPDATE " . MAIN_DB_PREFIX . "projet_task_time SET
                     task_datehour = '" . $db->escape($fecha_inicio) . "',
                     note = '" . $db->escape($nota) . "',
@@ -371,7 +376,6 @@ if (isset($_POST['edit'])) {
                     WHERE rowid = " . $id;
 
                 if ($db->query($sqlUpdateAttendance)) {
-                    // Mensaje de éxito
                     setEventMessage("Registro actualizado correctamente", 'mesgs');
                 } else {
                     setEventMessage('Error al actualizar attendance_event: ' . $db->lasterror(), 'errors');
@@ -387,10 +391,12 @@ if (isset($_POST['edit'])) {
 
 
 
-
+/*SI SE DECIDE BORRAR*/ 
 if ($_GET["action"] == "delete") {
+    //Obtener el token
     $token = intval($_GET['token']);
 
+    //Mostrar el modal
     print '
     <div style="position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;">
         <form method="POST" action="' . $_SERVER['PHP_SELF'] . '?token=' . $token . '" name="formfilter" autocomplete="off" style="background: white; padding: 20px; border-radius: 8px; width: 400px; text-align: center;">
@@ -415,27 +421,27 @@ if ($_GET["action"] == "delete") {
     
 }
 
-// Si pulsamos en confirmar borrado
+//Si se pulsa en confirmar borrado
 if (isset($_POST['Borrar'])) {
-    $token = intval($_GET['token']); // Asegúrate de que el ID sea un entero
+    $token = $_GET['token'];
 
     $db->begin();
     try {
+        //Borrar TODOS los registros donde el token sea igual al token del registro que se quiera borrar,para borrar tanto la entrada como la salida
         $sqlUpd = "DELETE FROM " . MAIN_DB_PREFIX . "attendance_event WHERE token = " . $token;
 
         $resultUpd = $db->query($sqlUpd);
 
         if (!$resultUpd) {
-            throw new Exception("Error en el borrado de la nota");
+            setEventMessage('Error al borrar el registro del tiempo', 'errors');
         }
 
-        // Mensaje de éxito
         setEventMessage("La hora imputada ha sido borrada correctamente.", "mesgs");
 
     } catch (Exception $e) {
         $db->rollback();
         setEventMessage($e->getMessage(), "errors");
-        exit; // Termina la ejecución del script en caso de error
+        exit;
     }
 
     $db->commit();
@@ -453,7 +459,12 @@ if (isset($_POST['Borrar'])) {
 
 
 
-
+/**
+ * 
+ * 
+ * 
+ * VISTA
+ */
 
 
 
@@ -463,6 +474,8 @@ $totalRecords = count($groupedProjects);
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', '', '', '', $totalRecords, $totalRecords, 'title_companies', 0, '', '', '');
 
 print '<form method = "GET" action = "">';
+
+//Solo si el usuario es administrador permitir que pueda ver todos los registros
 if ($user->admin) {
     print '<div style="text-align: center; margin-bottom: 20px;">';
     print '<select name="filter_type" onchange="this.form.submit()" style="padding: 5px;">';
@@ -474,7 +487,6 @@ if ($user->admin) {
 
 
 print '<table class = "liste" width = "100%">'."\n";
-        //TITLE
 print '<tr class = "liste_titre">';
 print_liste_field_titre('Eventtype', $PHP_SELF, 't.event_type', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('User', $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
@@ -495,23 +507,21 @@ print '<option value="2">Registro</option>';
 print '<option value="3">Salida</option>';
 print '</select>';
 print '</td>';
-//Search field foruserid
 print '<td class = "liste_titre" colspan = "1" >';
 print $form->select_dolusers($object->userid, 'ls_userid', 1, '', 0);
 print '</td>';
 
-    // Desplegable de Proyectos
-    print '<td class = "liste_titre" colspan = "1" >';
+print '<td class = "liste_titre" colspan = "1" >';
 
-    print '<select name="project" style="padding: 5px;">';
-    print '<option value="">Seleccionar Proyecto</option>';
-    foreach ($project_ids as $proj_id) {
-        $proj = new Project($db);
-        $proj->fetch($proj_id);
-        print '<option value="' . $proj_id . '"' . ($selected_project == $proj_id ? ' selected' : '') . '>' . $proj->title . '</option>';
-    }
-    print '</select>';
-    print '</td>';
+print '<select name="project" style="padding: 5px;">';
+print '<option value="">Seleccionar Proyecto</option>';
+foreach ($project_ids as $proj_id) {
+    $proj = new Project($db);
+    $proj->fetch($proj_id);
+    print '<option value="' . $proj_id . '"' . ($selected_project == $proj_id ? ' selected' : '') . '>' . $proj->title . '</option>';
+}
+print '</select>';
+print '</td>';
 
 print '<td class = "liste_titre" colspan = "1" >';
 print '<input class = "flat" type = "date"   name = "ls_date_time" value = "'.$ls_date_time_event_year.'">';
@@ -519,7 +529,7 @@ print '</td>';
 
 
 
- print '<td class = "liste_titre" colspan = "1" />';
+print '<td class = "liste_titre" colspan = "1" />';
 print '<button class="butAction" type="submit">Buscar</button>';
 
 print '</td>';
@@ -534,7 +544,7 @@ foreach ($groupedProjects as $project) {
     $projectDetails = new Project($db);
     $projectDetails->fetch($project['projectid']);
 
-    // Inicializar el tiempo total del proyecto en segundos
+    //Tiempo total del proyecto
     $total_time_seconds = 0;
 
     // Calcular el tiempo total sumando el tiempo de cada tarea
@@ -557,25 +567,23 @@ foreach ($groupedProjects as $project) {
         }
     }
 
-    // Convertir el tiempo total a horas, minutos y segundos
     $hours = floor($total_time_seconds / 3600);
     $minutes = floor(($total_time_seconds % 3600) / 60);
     $seconds = $total_time_seconds % 60;
 
-    // Fila del proyecto
+
     print '<tr class="liste_titre">';
     print '<td colspan="6"><strong>Proyecto: </strong><a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $project['projectid'] . '">' . $projectDetails->title . '</a> <strong>Total: </strong>' . $hours . ' h ' . $minutes . ' m ' . $seconds . ' s</td>';
     print '</tr>';
 
-    // Calcular total de tareas
     $totalTasks = count($project['tasks']);
     
-    // Paginación solo para el proyecto actual
+    //Paaginar solo para el proyecto actual
     $totalPages = ceil($totalTasks / $perPage);
     $startIndex = ($page - 1) * $perPage;
     $projectTasks = array_slice($project['tasks'], $startIndex, $perPage);
 
-    // Encabezados de la tabla de tareas
+    //Tabla de tareas
     print '<tr class="liste_titre">';
     print_liste_field_titre('Eventtype', $PHP_SELF, 't.event_type', '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre('User', $PHP_SELF, 't.fk_userid', '', $param, '', $sortfield, $sortorder);
@@ -585,7 +593,7 @@ foreach ($groupedProjects as $project) {
     print_liste_field_titre($langs->trans("Acciones"), $_SERVER["PHP_SELF"], "t.duration_effective", "", '', '', $sortfield, $sortorder);
     print '</tr>';
     
-    // Mostrar las tareas del proyecto
+    //Tareas del proyecto
     foreach ($projectTasks as $task) {
         $userDetails = new User($db);
         $userDetails->fetch($task->fk_userid);
@@ -598,55 +606,53 @@ foreach ($groupedProjects as $project) {
 
         $date_start = '';
         if (!empty($task->date_time_event)) {
-            $dateTime = new DateTime($task->date_time_event); // Pasa la fecha y hora directamente
-            $dateTime->setTimezone(new DateTimeZone('CET')); // Ajusta la zona horaria a CET
-            $date_start = $dateTime->format('Y-m-d H:i:s'); // Formato de fecha y hora en CET
+            $dateTime = new DateTime($task->date_time_event);
+            $dateTime->setTimezone(new DateTimeZone('CET'));
+            $date_start = $dateTime->format('Y-m-d H:i:s');
         }
         
         
         print '<td>' . $date_start . '</td>';
         
         if ($task->event_type == 1 || $task->event_type == 2) { // Entrada
-            print '<td>--</td>'; // No se muestra tiempo transcurrido para entradas
+            print '<td>--</td>';
         } elseif ($task->event_type == 3) { // Salida
-            // Realiza una consulta para obtener el date_time_event de la última entrada
+            
             $query = "SELECT date_time_event FROM khns_attendance_event 
                       WHERE token = '{$task->token}' AND event_type = 2 
                       ORDER BY date_time_event DESC LIMIT 1"; 
             
             $lastEntryResult = $db->query($query);
-            $lastEntry = $lastEntryResult->fetch_object(); // Recupera el resultado como objeto
+            $lastEntry = $lastEntryResult->fetch_object();
     
             if ($lastEntry) {
                 $lastEntryTime = $db->jdate($lastEntry->date_time_event);
                 $exitTime = $db->jdate($task->date_time_event);
                 $elapsedTime = $exitTime - $lastEntryTime;
     
-                // Convertir a horas, minutos y segundos
                 $hours = floor($elapsedTime / 3600);
                 $minutes = floor(($elapsedTime % 3600) / 60);
                 $seconds = $elapsedTime % 60;
     
                 print '<td>' . sprintf('%02d h %02d m %02d s', $hours, $minutes, $seconds) . '</td>';
             } else {
-                print '<td>--</td>'; // Sin entrada previa para este token
+                print '<td>--</td>'; 
             }
         } else {
-            print '<td>--</td>'; // Para cualquier caso en que no haya tiempo transcurrido
+            print '<td>--</td>';
         }
 
-        print '<td>' . $task->note . '</td>'; // Mostrar nota
+        print '<td>' . $task->note . '</td>';
         
-        // Asegurarse de que no hay <td> vacío
         print '<td>';
         print '<a class="fas fa-clock pictodelete" title="Imputar tiempo" href="' . $_SERVER["PHP_SELF"] . '?action=edit&id=' . $task->rowid . '"></a>';
         print '<a class="fas fa-trash pictodelete" title="Eliminar" href="' . $_SERVER["PHP_SELF"] . '?action=delete&token=' . $task->token . '"></a>';
-        print '</td>'; // Aquí cerramos la celda de acciones
+        print '</td>';
 
         print '</tr>';
     }
 
-    // Navegación de páginas
+    //PAGINACION
     if ($totalPages > 1) {
         print '<tr><td colspan="6" style="text-align:center;">';
         for ($i = 1; $i <= $totalPages; $i++) {

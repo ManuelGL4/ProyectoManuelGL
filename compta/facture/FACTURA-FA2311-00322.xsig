@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fe:Facturae xmlns:fe="http://www.facturae.es/Facturae/2014/v3.2.1/Facturae">
+	<FileHeader>
+		<SchemaVersion>3.2.1</SchemaVersion>
+		<Modality>I</Modality>
+		<InvoiceIssuerType>EM</InvoiceIssuerType>
+		<Batch>
+			<BatchIdentifier>A000000000032FA2311</BatchIdentifier>
+			<InvoicesCount>1</InvoicesCount>
+			<TotalInvoicesAmount>
+				<TotalAmount>1444.14</TotalAmount>
+			</TotalInvoicesAmount>
+			<TotalOutstandingAmount>
+				<TotalAmount>1444.14</TotalAmount>
+			</TotalOutstandingAmount>
+			<TotalExecutableAmount>
+				<TotalAmount>1444.14</TotalAmount>
+			</TotalExecutableAmount>
+			<InvoiceCurrencyCode>EUR</InvoiceCurrencyCode>
+		</Batch>
+	</FileHeader>
+	<Parties>
+		<SellerParty>
+			<TaxIdentification>
+				<PersonTypeCode>J</PersonTypeCode>
+				<ResidenceTypeCode>R</ResidenceTypeCode>
+				<TaxIdentificationNumber>A00000000</TaxIdentificationNumber>
+			</TaxIdentification>
+			<LegalEntity>
+				<CorporateName>DELTANET SI</CorporateName>
+				<AddressInSpain>
+					<Address>C/Luxemburgo. 2B</Address>
+					<PostCode>13005</PostCode>
+					<Town>Ciudad Real</Town>
+					<Province>Ciudad Real</Province>
+					<CountryCode>ESP</CountryCode>
+				</AddressInSpain>
+			</LegalEntity>
+		</SellerParty>
+		<BuyerParty>
+			<TaxIdentification>
+				<PersonTypeCode>J</PersonTypeCode>
+				<ResidenceTypeCode>R</ResidenceTypeCode>
+				<TaxIdentificationNumber>B12345678</TaxIdentificationNumber>
+			</TaxIdentification>
+			<LegalEntity>
+				<CorporateName>Promotora Electricidad Andaluza, S.L.</CorporateName>
+				<AddressInSpain>
+					<Address>Calle de abajo, 3</Address>
+					<PostCode>28703</PostCode>
+					<Town>San Sebastián de los Reyes</Town>
+					<Province>Madrid</Province>
+					<CountryCode>ESP</CountryCode>
+				</AddressInSpain>
+			</LegalEntity>
+		</BuyerParty>
+	</Parties>
+	<Invoices>
+		<Invoice>
+			<InvoiceHeader>
+				<InvoiceNumber>0032</InvoiceNumber>
+				<InvoiceSeriesCode>FA2311</InvoiceSeriesCode>
+				<InvoiceDocumentType>FC</InvoiceDocumentType>
+				<InvoiceClass>OO</InvoiceClass>
+			</InvoiceHeader>
+			<InvoiceIssueData>
+				<IssueDate>2023-11-20</IssueDate>
+				<InvoiceCurrencyCode>EUR</InvoiceCurrencyCode>
+				<TaxCurrencyCode>EUR</TaxCurrencyCode>
+				<LanguageName>es</LanguageName>
+			</InvoiceIssueData>
+			<TaxesOutputs>
+				<Tax>
+					<TaxTypeCode>01</TaxTypeCode>
+					<TaxRate>21.00</TaxRate>
+					<TaxableBase>
+						<TotalAmount>1193.50</TotalAmount>
+					</TaxableBase>
+					<TaxAmount>
+						<TotalAmount>250.64</TotalAmount>
+					</TaxAmount>
+				</Tax>
+				<Tax>
+					<TaxTypeCode>01</TaxTypeCode>
+					<TaxRate>0.00</TaxRate>
+					<TaxableBase>
+						<TotalAmount>0.00</TotalAmount>
+					</TaxableBase>
+					<TaxAmount>
+						<TotalAmount>0.00</TotalAmount>
+					</TaxAmount>
+				</Tax>
+			</TaxesOutputs>
+			<InvoiceTotals>
+				<TotalGrossAmount>1193.50</TotalGrossAmount>
+				<TotalGeneralDiscounts>0.00</TotalGeneralDiscounts>
+				<TotalGeneralSurcharges>0.00</TotalGeneralSurcharges>
+				<TotalGrossAmountBeforeTaxes>1193.50</TotalGrossAmountBeforeTaxes>
+				<TotalTaxOutputs>250.64</TotalTaxOutputs>
+				<TotalTaxesWithheld>0.00</TotalTaxesWithheld>
+				<InvoiceTotal>1444.14</InvoiceTotal>
+				<TotalOutstandingAmount>1444.14</TotalOutstandingAmount>
+				<TotalExecutableAmount>1444.14</TotalExecutableAmount>
+			</InvoiceTotals>
+			<Items>
+				<InvoiceLine>
+					<ItemDescription>SIMANT - Trabajos Preventivos. Cuota de mantenimiento de conservación del siguiente mantenimiento: 
+T01MS2216000 - MSN  instalados en ...
+pieza_2 - pieza 2  instalados en ...
+007-212 - Recambio  instalados en ...
+0003155 - Producto nuevo  instalados en ...</ItemDescription>
+					<Quantity>2</Quantity>
+					<UnitOfMeasure>01</UnitOfMeasure>
+					<UnitPriceWithoutTax>596.75206612</UnitPriceWithoutTax>
+					<TotalCost>1193.50</TotalCost>
+					<GrossAmount>1193.50</GrossAmount>
+					<TaxesOutputs>
+						<Tax>
+							<TaxTypeCode>01</TaxTypeCode>
+							<TaxRate>21.00</TaxRate>
+							<TaxableBase>
+								<TotalAmount>1193.50</TotalAmount>
+							</TaxableBase>
+							<TaxAmount>
+								<TotalAmount>250.64</TotalAmount>
+							</TaxAmount>
+						</Tax>
+					</TaxesOutputs>
+				</InvoiceLine>
+				<InvoiceLine>
+					<ItemDescription>Esta es la descripción de la pieza 2</ItemDescription>
+					<Quantity>2</Quantity>
+					<UnitOfMeasure>01</UnitOfMeasure>
+					<UnitPriceWithoutTax>0.00</UnitPriceWithoutTax>
+					<TotalCost>0.00</TotalCost>
+					<GrossAmount>0.00</GrossAmount>
+					<TaxesOutputs>
+						<Tax>
+							<TaxTypeCode>01</TaxTypeCode>
+							<TaxRate>0.00</TaxRate>
+							<TaxableBase>
+								<TotalAmount>0.00</TotalAmount>
+							</TaxableBase>
+							<TaxAmount>
+								<TotalAmount>0.00</TotalAmount>
+							</TaxAmount>
+						</Tax>
+					</TaxesOutputs>
+				</InvoiceLine>
+			</Items>
+		</Invoice>
+	</Invoices>
+</fe:Facturae>

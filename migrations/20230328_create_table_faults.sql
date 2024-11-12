@@ -1,0 +1,11 @@
+CREATE TABLE `khns_faults` 
+(`id` INT NOT NULL AUTO_INCREMENT ,
+`client` VARCHAR(255) NOT NULL ,
+`company_name` VARCHAR(255) NOT NULL ,
+`cif` VARCHAR(255) NOT NULL ,
+`description` VARCHAR(255) NOT NULL ,
+`name` VARCHAR(255) NOT NULL ,
+`phone` VARCHAR(255) NOT NULL ,
+`email` VARCHAR(255) NOT NULL ,
+PRIMARY KEY (`id`)
+) ENGINE = InnoDB;

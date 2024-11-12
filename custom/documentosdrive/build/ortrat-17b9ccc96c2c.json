@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ortrat",
+  "private_key_id": "17b9ccc96c2cfe936f0ecc79b064296a00920f8c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJ49JUFfTx1wyO\nhlwdIb7zJ0K7BV8XFJmPXtsHFlNSvcPtkax5CpA8vXDp3uMDSI8OCG9IhxLYRdNV\nQiy3l0Tgarq+cL1JYhUKKd5qKpUkQGvb6zpwxC/+VBnlBp7r6rDVZLx2RATlizek\nm3ocvPe9fAh5xhi7NeaVtxoSZe68LLlWRijawYAUWoGv4sKAgTuo9jkoJjwNOpJh\nILkr0vnjs/yDTYsL/xeHJiGHgXssiya8j1i9NPFGS6Xl/b5Za5sYJRhKj7sGCJpC\nRahOv7pBpQd3OjF54jEscxLSY13TGaaq1MH5kwIM183GWxaCoGS+mt56qSTLTxtg\ngRel87HFAgMBAAECggEAE96aKrBmhQ63K6fJlQxnMKMijCmBLFJYsqWRROdLmA8Z\nI1587QS/IVs7q6jGCuKvQaBO44J3tlVY8UEsCX2Xx8Z5Tpjl6D0A+RkZzLUYLJMy\nilhiTgrg9lTsn3/BUFKuyLG7YqBbIwRKm6a5o+5tK3bzlpiKgpJReVal+D2T+2z2\npsKKOJhgQGrBhOrRauZc3jvsLtP8j8/UPXZbINADqs4rrwwh6M/waqYHlQs+HbaY\nHe+CJX6Sy0W37GWfm9UJia86+vESN/BWR5kkeiCd6m9bI7LPbkkLcfPP7mdw6avJ\nstRZ+NhwJaezUcZBccqxafONlsqr0mnOdPPFAfzNWQKBgQDnsL4vSeUsTaTsEEp3\nH+3+pK8KM1d5NA958ruBXZwIBBzPp79Ah7p5Mvg6ZhToTpUI4uMk32WmcRbQgtjz\nWHq0WXqjVI6WfdBd2YA4RE+N+tmTadZPySjww0B9Hf7Zjy+ElSWTbVaqLTflm1kF\nu/3Ibmpy1kWOJ9WhCELkZt9wOwKBgQDfEqGTW+P+VP9UtCQRreZbtoinvhu0VG4C\ntZNQcj9XDNfuBRQquixHixeq1rHn2EwXepcp53crUz3BiakyxlVDMZPOp0HzMnem\n3DZkZqJW3J0Ic2UvrV7tlANHbXO0kEAMEm2AvOEYrviJF39boRVEQWLYTKn5WBQT\nR5BwdTlF/wKBgBATKC7ZvqfDP1UNkE0Rjw6i2G4pv8DuBsDcQXwpRYEc3+7cYZ2V\njS+JhMVwfbTcduSl8UKGqWPR5tZSrcC8e871glfArx/r3MAWLho5Sxe7tsrOhgsF\nFu0Vbuz/XsYzdAWL346KAIBQINeyXovSTjpQxtvu1+aUBvNkQlfcd1YvAoGBAKSW\n15alj0RhrH7v50kQGU6EELJLp59XSFBBbu9FTIzLEisxnh6kfPVQoGbRwDRDOGl+\nbzhg62GRKpi5HJk1E0Xft6IbcKKjEvuPsaZEv/T9E/RfSEJ0Vf1PX1f9XwjUAh2m\nHxuEwUT4HLLyHmsaIFnbMLZNYoByR2WuQNlo9Jg7AoGBAJl3u1J/RB/Ak5T34miv\nAwzDm/pJWiJtWLPVPVkZMRJF3u56k8iq03zhoTsLnQFHlDtxJ6udWKxmPuGrxcwi\nDVD11KbAShyiqkXv6woO03OSNZJ8WrhKrScGc7Qjtz5+bX7PmEbjpift62I1ri7P\nLCX6yk2BMVdPamzQUZDZWnKo\n-----END PRIVATE KEY-----\n",
+  "client_email": "ortrat-drive@ortrat.iam.gserviceaccount.com",
+  "client_id": "109199597970131316885",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ortrat-drive%40ortrat.iam.gserviceaccount.com"
+}

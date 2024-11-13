@@ -113,7 +113,7 @@ print '<link rel="stylesheet" type="text/css" href="index.css">';
 
 llxHeader("", $title);
 print load_fiche_titre($langs->trans("Chrono"), '', 'object_informacion_formacion.png@recursoshumanos');
-print '<script src="script.js"></script>';
+print '<script type="module" src="app.js"></script>';
 
 //Formulario busqueda
 print '

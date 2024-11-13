@@ -1,4 +1,4 @@
-class TimerController {
+export class TimerController {
     constructor(model, view) {
         this.model = model;
         this.view = view;

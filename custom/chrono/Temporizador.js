@@ -1,4 +1,4 @@
-class TimerModel {
+export class TimerModel {
     constructor() {
         this.timers = {};
         this.startTimes = {};

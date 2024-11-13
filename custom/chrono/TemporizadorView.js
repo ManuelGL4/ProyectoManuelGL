@@ -1,31 +1,68 @@
-// TimerView.js
-
 class TimerView {
+    constructor() {
+        this.timerElements = {};
+        this.totalTimeElement = document.getElementById('total-time');
+        this.currentTimeElement = document.getElementById('current-time');
+    }
+
     updateTimerUI(timers) {
-        for (let taskId in timers) {
-            const taskIcon = document.getElementById("icon-" + taskId);
-            const resetIcon = document.getElementById("reset-" + taskId);
-            if (timers[taskId]) {
-                taskIcon.innerHTML = "<img src='img/detener.png' alt='Detener' style='height: 40px;' onclick='controller.stopTimer(" + taskId + ")'>";
-                resetIcon.style.display = "inline-block";
-            } else {
-                taskIcon.innerHTML = "<img src='img/notstarted.png' alt='Iniciar' style='height: 40px;' onclick='controller.startTimer(" + taskId + ")'>";
-                resetIcon.style.display = "none";
+        for (const taskId in timers) {
+            if (!this.timerElements[taskId]) {
+                this.createTimerElement(taskId);
             }
+            this.timerElements[taskId].innerText = timers[taskId] ? 'Running' : 'Stopped';
         }
     }
 
-    displayTime(taskId, timeString) {
-        document.getElementById("time-" + taskId).innerHTML = timeString;
+    createTimerElement(taskId) {
+        const timerElement = document.createElement('div');
+        timerElement.id = `timer-${taskId}`;
+        document.getElementById('timers-container').appendChild(timerElement);
+        this.timerElements[taskId] = timerElement;
     }
 
-    displayCurrentTime(timeString) {
-        document.getElementById("current-time").innerText = "Hora actual: " + timeString;
+    updateTotalTime(totalElapsedTimes) {
+        const totalTime = Object.values(totalElapsedTimes).reduce((acc, time) => acc + time, 0);
+        this.totalTimeElement.innerText = `Total Time: ${totalTime} seconds`;
     }
 
-    displayTotalTime(timeString) {
-        document.getElementById("total-time").innerText = "Tiempo total: " + timeString;
+    updateCurrentTime() {
+        const now = new Date();
+        this.currentTimeElement.innerText = `Current Time: ${now.toLocaleTimeString()}`;
     }
-
-    // Otros métodos para actualizar la interfaz de usuario
 }
+/**
+ * 
+ * class TimerView {
+    constructor() {
+        this.timerElements = {};
+        this.totalTimeElement = document.getElementById('total-time');
+        this.currentTimeElement = document.getElementById('current-time');
+        
+        // Store references to start and stop buttons
+        this.startButtons = document.querySelectorAll('.start-button');
+        this.stopButtons = document.querySelectorAll('.stop-button');
+    }
+
+    // ... (rest of the previous view code remains the same)
+
+    bindStartStopEvents(startHandler, stopHandler) {
+        // Attach event listeners to start buttons
+        this.startButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const taskId = button.getAttribute('data-task-id');
+                startHandler(taskId);
+            });
+        });
+
+        // Attach event listeners to stop buttons
+        this.stopButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const taskId = button.getAttribute('data-task-id');
+                stopHandler(taskId);
+            });
+        });
+    }
+}
+ */
+export default TimerView;
